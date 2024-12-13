@@ -1,0 +1,15 @@
+{
+  "dependencies": {
+    "@netlify/functions": "^2.8.2",
+    "redis": "^4.7.0",
+    "uuid": "^11.0.3"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "netlify-cli": "^17.38.0",
+    "prettier": "^3.4.2"
+  },
+  "scripts": {
+    "start": "netlify dev"
+  }
+}

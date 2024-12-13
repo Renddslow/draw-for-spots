@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+    <meta charset="utf-8" />
+    <title>Draw for Spots</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+            "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            width: 100%;
+            height: 100%;
+            background: #ece1cc;
+        }
+
+        h1,
+        h2 {
+            color: #191a1c;
+            font-weight: 900;
+        }
+
+        h1 {
+            font-size: 24px;
+        }
+
+        #wrapper {
+            width: 100%;
+            padding: 24px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: #E5D5B9;
+            border-radius: 12px;
+            padding: 12px 24px;
+            margin: 12px 0;
+        }
+
+        h3, p {
+            font-size: 16px;
+        }
+
+        form {
+            margin: 48px 0;
+        }
+
+        .form-control {
+            display: grid;
+            grid-gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        label {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        input {
+            padding: 8px;
+            border-radius: 4px;
+            border: 2px solid #191a1c;
+            font-size: 18px;
+        }
+
+        button {
+            font-size: 16px;
+            border-radius: 50px;
+            color: #000;
+            background: #F9DD61;
+            font-weight: 700;
+            display: block;
+            padding: 12px 24px;
+            appearance: none;
+            border: 3px solid #000;
+            cursor: pointer;
+            margin: 0 auto;
+        }
+
+        ol {
+            margin: 12px 0 16px;
+            padding-left: 24px;
+            font-size: 18px;
+        }
+
+        ol li {
+            padding-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+<div id="wrapper">
+    <h1>White Elephant Draw for Spots</h1>
+    <h2>Admin for {table_name}'s Table</h2>
+    <section>
+        <div class="card">
+            <h3>Instructions</h3>
+            <p>
+                Hit the draw button and get randomly assigned spots for the table.
+            </p>
+        </div>
+        <div class="spots">
+            <h3>Spots</h3>
+            <ol></ol>
+        </div>
+        <button id="draw">Draw!</button>
+    </section>
+</div>
+<script>
+    (() => {
+        const path = window.location.pathname;
+        const table = path.split("/")[1];
+
+        const tableLeader = `${table[0].toUpperCase()}${table.slice(1)}`;
+
+        document.querySelector("h2").textContent = document
+            .querySelector("h2")
+            .textContent.replace("{table_name}", tableLeader);
+        document.querySelector("section p").textContent = document
+            .querySelector("section p")
+            .textContent.replace("{table_name}", tableLeader);
+
+        document.querySelector('#draw').addEventListener('click', async () => {
+            const response = await fetch(`/.netlify/functions/draw`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ room: table }),
+            });
+
+            const { spots } = await response.json();
+
+            const spotsList = document.querySelector('.spots ol');
+            spotsList.innerHTML = '';
+
+            spots.forEach((spot) => {
+                const spotItem = document.createElement('li');
+                spotItem.textContent = spot.name;
+                spotsList.appendChild(spotItem);
+            });
+        });
+
+    })();
+</script>
+</body>
+</html>
